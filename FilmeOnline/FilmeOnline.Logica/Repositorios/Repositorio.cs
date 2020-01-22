@@ -13,17 +13,17 @@ namespace FilmeOnline.Repositorios
             _unitOfWork = unitOfWork;
         }
 
-        public T GetById(long id)
+        public T RecuperarPorId(long id)
         {
             return _unitOfWork.Get<T>(id);
         }
 
-        public void Add(T entity)
+        public void Adicionar(T entity)
         {
             _unitOfWork.SaveOrUpdate(entity);
         }
 
-        public void SaveChanges()
+        public void Commitar()
         {
             _unitOfWork.Commit();
         }

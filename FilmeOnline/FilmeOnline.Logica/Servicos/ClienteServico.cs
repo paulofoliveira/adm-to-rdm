@@ -1,19 +1,19 @@
+using FilmeOnline.Entidades;
 using System;
 using System.Linq;
-using FilmeOnline.Entidades;
 
 namespace FilmeOnline.Servicos
 {
     public class ClienteServico
     {
-        private readonly FilmeServico _movieService;
+        private readonly FilmeServico _filmeServico;
 
-        public ClienteServico(FilmeServico movieService)
+        public ClienteServico(FilmeServico filmeServico)
         {
-            _movieService = movieService;
+            _filmeServico = filmeServico;
         }
 
-        private decimal CalculatePrice(ClienteStatus status, DateTime? statusExpirationDate, LicencaTipo licensingModel)
+        private decimal CalcularPreco(ClienteStatus status, DateTime? statusExpirationDate, LicencaTipo licensingModel)
         {
             decimal price;
             switch (licensingModel)
@@ -38,30 +38,30 @@ namespace FilmeOnline.Servicos
             return price;
         }
 
-        public void PurchaseMovie(Cliente customer, Filme movie)
+        public void AlugarFilme(Cliente cliente, Filme filme)
         {
-            DateTime? expirationDate = _movieService.GetExpirationDate(movie.Licenca);
-            decimal price = CalculatePrice(customer.Status, customer.DataExpiracaoStatus, movie.Licenca);
+            DateTime? dataExpiracao = _filmeServico.GetExpirationDate(filme.Licenca);
+            decimal valor = CalcularPreco(cliente.Status, cliente.DataExpiracaoStatus, filme.Licenca);
 
-            var purchasedMovie = new Aluguel
+            var aluguel = new Aluguel
             {
-                FilmeId = movie.Id,
-                ClienteId = customer.Id,
-                DataExpiracao = expirationDate,
-                Valor = price
+                FilmeId = filme.Id,
+                ClienteId = cliente.Id,
+                DataExpiracao = dataExpiracao,
+                Valor = valor
             };
 
-            customer.Alugueis.Add(purchasedMovie);
-            customer.ValorGasto += price;
+            cliente.Alugueis.Add(aluguel);
+            cliente.ValorGasto += valor;
         }
 
-        public bool PromoteCustomer(Cliente customer)
+        public bool PromoverCliente(Cliente customer)
         {
-            // at least 2 active movies during the last 30 days
+            // Pelo menos 2 filmes alugados nos últimos 30 dias
             if (customer.Alugueis.Count(x => x.DataExpiracao == null || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
                 return false;
 
-            // at least 100 dollars spent during the last year
+            // Pelo menos 100 reais gastos no último ano.
             if (customer.Alugueis.Where(x => x.DataAluguel > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Valor) < 100m)
                 return false;
 
