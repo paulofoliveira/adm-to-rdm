@@ -137,7 +137,7 @@ namespace FilmeOnline.Api.Controllers
         }
 
         [HttpPost]
-        [Route("{id}/promocao")]
+        [Route("{id}/promover")]
         public IActionResult PromoverCliente(long id)
         {
             try
