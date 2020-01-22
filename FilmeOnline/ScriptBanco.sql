@@ -1,6 +1,6 @@
-﻿CREATE DATABASE [FilmesOnline]
+﻿CREATE DATABASE [FilmeOnline]
 GO
-USE [FilmesOnline]
+USE [FilmeOnline]
 GO
 /****** Object:  Table [dbo].[Cliente]    Script Date: 11/15/2017 4:11:10 PM ******/
 SET ANSI_NULLS ON
