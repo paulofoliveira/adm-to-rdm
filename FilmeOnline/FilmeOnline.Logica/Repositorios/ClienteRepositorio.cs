@@ -16,12 +16,6 @@ namespace FilmeOnline.Repositorios
         {
             return _unitOfWork
                 .Query<Cliente>()
-                .ToList()
-                .Select(x =>
-                {
-                    x.Alugueis = null;
-                    return x;
-                })
                 .ToList();
         }
 

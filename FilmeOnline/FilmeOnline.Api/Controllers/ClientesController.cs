@@ -1,4 +1,5 @@
 ﻿using FilmeOnline.Entidades;
+using FilmeOnline.Logica.Dtos;
 using FilmeOnline.Repositorios;
 using FilmeOnline.Servicos;
 using Microsoft.AspNetCore.Mvc;
@@ -32,18 +33,50 @@ namespace FilmeOnline.Api.Controllers
                 return NotFound();
             }
 
-            return Json(cliente);
+            var dto = new ClienteDto()
+            {
+                Id = cliente.Id,
+                Nome = cliente.Nome,
+                Email = cliente.Email,
+                ValorGasto = cliente.ValorGasto,
+                Status = cliente.Status.ToString(),
+                DataExpiracaoStatus = cliente.DataExpiracaoStatus,
+                Alugueis = cliente.Alugueis.Select(p => new AluguelDto()
+                {
+                    Valor = p.Valor,
+                    DataExpiracao = p.DataExpiracao,
+                    DataAluguel = p.DataAluguel,
+                    Filme = new FilmeDto()
+                    {
+                        Id = p.FilmeId,
+                        Nome = p.Filme.Nome
+                    }
+                }).ToList()
+            };
+
+            return Json(dto);
         }
 
         [HttpGet]
         public JsonResult GetLista()
         {
             var clientes = _clienteRepositorio.RecuperarLista();
-            return Json(clientes);
+
+            var dto = clientes.Select(p => new ClienteListaDto()
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                Email = p.Email,
+                ValorGasto = p.ValorGasto,
+                Status = p.Status.ToString(),
+                DataExpiracaoStatus = p.DataExpiracaoStatus
+            }).ToList();
+
+            return Json(dto);
         }
 
         [HttpPost]
-        public IActionResult Cadastrar([FromBody] Cliente item)
+        public IActionResult Cadastrar([FromBody] CriarClienteDto item)
         {
             try
             {
@@ -57,9 +90,16 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Email já está em uso: " + item.Email);
                 }
 
-                item.Id = 0;
-                item.Status = ClienteStatus.Normal;
-                _clienteRepositorio.Adicionar(item);
+                var cliente = new Cliente()
+                {
+                    Nome = item.Nome,
+                    Email = item.Email,
+                    ValorGasto = 0,
+                    Status = ClienteStatus.Normal,
+                    DataExpiracaoStatus = null
+                };
+
+                _clienteRepositorio.Adicionar(cliente);
                 _clienteRepositorio.Commitar();
 
                 return Ok();
@@ -72,7 +112,7 @@ namespace FilmeOnline.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public IActionResult Atualizar(long id, [FromBody] Cliente item)
+        public IActionResult Atualizar(long id, [FromBody] AtualizarClienteDto item)
         {
             try
             {

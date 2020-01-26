@@ -67,6 +67,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dtos\AluguelDto.cs" />
+    <Compile Include="Dtos\AtualizarClienteDto.cs" />
+    <Compile Include="Dtos\ClienteDto.cs" />
+    <Compile Include="Dtos\ClienteListaDto.cs" />
+    <Compile Include="Dtos\CriarClienteDto.cs" />
+    <Compile Include="Dtos\FilmeDto.cs" />
     <Compile Include="Entidades\Aluguel.cs" />
     <Compile Include="Entidades\Cliente.cs" />
     <Compile Include="Entidades\ClienteStatus.cs" />
