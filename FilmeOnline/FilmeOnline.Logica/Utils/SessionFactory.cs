@@ -8,7 +8,7 @@ using FluentNHibernate.Mapping;
 using NHibernate;
 using System.Reflection;
 
-namespace FilmeOnline.Utils
+namespace FilmeOnline.Logica.Utils
 {
     public class SessionFactory
     {

@@ -1,7 +1,7 @@
-﻿using FilmeOnline.Entidades;
-using FilmeOnline.Utils;
+﻿using FilmeOnline.Logica.Entidades;
+using FilmeOnline.Logica.Utils;
 
-namespace FilmeOnline.Repositorios
+namespace FilmeOnline.Logica.Repositorios
 {
     public abstract class Repositorio<T>
         where T : Entidade

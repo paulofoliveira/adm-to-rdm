@@ -1,4 +1,4 @@
-namespace FilmeOnline.Entidades
+namespace FilmeOnline.Logica.Entidades
 {
     public enum LicencaTipo
     {

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FilmeOnline.Entidades
+namespace FilmeOnline.Logica.Entidades
 {
     public class Cliente : Entidade
     {

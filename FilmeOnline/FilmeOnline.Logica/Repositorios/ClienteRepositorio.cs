@@ -1,9 +1,9 @@
-﻿using FilmeOnline.Entidades;
-using FilmeOnline.Utils;
+﻿using FilmeOnline.Logica.Entidades;
+using FilmeOnline.Logica.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FilmeOnline.Repositorios
+namespace FilmeOnline.Logica.Repositorios
 {
     public class ClienteRepositorio : Repositorio<Cliente>
     {

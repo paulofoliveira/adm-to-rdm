@@ -1,6 +1,6 @@
-﻿using FilmeOnline.Entidades;
-using FilmeOnline.Repositorios;
-using FilmeOnline.Servicos;
+﻿using FilmeOnline.Logica.Entidades;
+using FilmeOnline.Logica.Repositorios;
+using FilmeOnline.Logica.Servicos;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;

@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace FilmeOnline.Entidades
+namespace FilmeOnline.Logica.Entidades
 {
     public class Aluguel : Entidade
     {

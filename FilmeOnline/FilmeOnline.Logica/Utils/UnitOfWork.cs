@@ -4,7 +4,7 @@ using System.Linq;
 using NHibernate;
 using NHibernate.Linq;
 
-namespace FilmeOnline.Utils
+namespace FilmeOnline.Logica.Utils
 {
     public class UnitOfWork : IDisposable
     {
