@@ -36,8 +36,8 @@ namespace FilmeOnline.Api.Controllers
             var dto = new ClienteDto()
             {
                 Id = cliente.Id,
-                Nome = cliente.Nome,
-                Email = cliente.Email,
+                Nome = cliente.Nome.Value,
+                Email = cliente.Email.Value,
                 ValorGasto = cliente.ValorGasto,
                 Status = cliente.Status.ToString(),
                 DataExpiracaoStatus = cliente.DataExpiracaoStatus,
@@ -65,8 +65,8 @@ namespace FilmeOnline.Api.Controllers
             var dto = clientes.Select(p => new ClienteListaDto()
             {
                 Id = p.Id,
-                Nome = p.Nome,
-                Email = p.Email,
+                Nome = p.Nome.Value,
+                Email = p.Email.Value,
                 ValorGasto = p.ValorGasto,
                 Status = p.Status.ToString(),
                 DataExpiracaoStatus = p.DataExpiracaoStatus
@@ -92,8 +92,8 @@ namespace FilmeOnline.Api.Controllers
 
                 var cliente = new Cliente()
                 {
-                    Nome = item.Nome,
-                    Email = item.Email,
+                    Nome = new ClienteNome(item.Nome),
+                    Email = new Email(item.Email),
                     ValorGasto = 0,
                     Status = ClienteStatus.Normal,
                     DataExpiracaoStatus = null
@@ -128,7 +128,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Id de cliente inválido: " + id);
                 }
 
-                cliente.Nome = item.Nome;
+                cliente.Nome = new ClienteNome(item.Nome);
                 _clienteRepositorio.Commitar();
 
                 return Ok();

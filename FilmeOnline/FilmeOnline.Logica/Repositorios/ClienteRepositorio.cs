@@ -23,7 +23,7 @@ namespace FilmeOnline.Logica.Repositorios
         {
             return _unitOfWork
                 .Query<Cliente>()
-                .SingleOrDefault(x => x.Email == email);
+                .SingleOrDefault(x => x.Email == new Email(email));
         }
     }
 }
