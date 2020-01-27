@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmeOnline.Logica", "FilmeOnline.Logica\FilmeOnline.Logica.csproj", "{93824BFE-C169-4625-8967-81CCECB631D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmeOnline.Api", "FilmeOnline.Api\FilmeOnline.Api.csproj", "{7A9196AE-9E68-4AF3-8CBF-4738060F938D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmeOnline.Api", "FilmeOnline.Api\FilmeOnline.Api.csproj", "{7A9196AE-9E68-4AF3-8CBF-4738060F938D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{290EF134-804D-4D7C-B8B4-6BFFAC19B93F}"
 	ProjectSection(SolutionItems) = preProject

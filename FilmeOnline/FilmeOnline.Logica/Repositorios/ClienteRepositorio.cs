@@ -19,11 +19,11 @@ namespace FilmeOnline.Logica.Repositorios
                 .ToList();
         }
 
-        public Cliente RecuperarPorEmail(string email)
+        public Cliente RecuperarPorEmail(Email email)
         {
             return _unitOfWork
                 .Query<Cliente>()
-                .SingleOrDefault(x => x.Email == new Email(email));
+                .SingleOrDefault(x => x.Email == email);
         }
     }
 }

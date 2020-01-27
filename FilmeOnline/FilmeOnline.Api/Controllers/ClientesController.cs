@@ -5,6 +5,7 @@ using FilmeOnline.Logica.Servicos;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using CSharpFunctionalExtensions;
 
 namespace FilmeOnline.Api.Controllers
 {
@@ -80,20 +81,25 @@ namespace FilmeOnline.Api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
+                var nomeOuErro = ClienteNome.Criar(item.Nome);
+                var emailOuErro = Email.Criar(item.Email);
+
+                var result = Result.Combine(nomeOuErro, emailOuErro);
+
+                if (result.IsFailure)
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest(result.Error);
                 }
 
-                if (_clienteRepositorio.RecuperarPorEmail(item.Email) != null)
+                if (_clienteRepositorio.RecuperarPorEmail(emailOuErro.Value) != null)
                 {
                     return BadRequest("Email já está em uso: " + item.Email);
                 }
 
                 var cliente = new Cliente()
                 {
-                    Nome = new ClienteNome(item.Nome),
-                    Email = new Email(item.Email),
+                    Nome = nomeOuErro.Value,
+                    Email = emailOuErro.Value,
                     ValorGasto = 0,
                     Status = ClienteStatus.Normal,
                     DataExpiracaoStatus = null
@@ -116,10 +122,15 @@ namespace FilmeOnline.Api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
+                var nomeOuErro = ClienteNome.Criar(item.Nome);
+
+                var result = Result.Combine(nomeOuErro);
+
+                if (result.IsFailure)
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest(result.Error);
                 }
+
 
                 var cliente = _clienteRepositorio.RecuperarPorId(id);
 
@@ -128,7 +139,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Id de cliente inválido: " + id);
                 }
 
-                cliente.Nome = new ClienteNome(item.Nome);
+                cliente.Nome = nomeOuErro.Value;
                 _clienteRepositorio.Commitar();
 
                 return Ok();
