@@ -1,6 +1,6 @@
-using FilmeOnline.Repositorios;
-using FilmeOnline.Servicos;
-using FilmeOnline.Utils;
+using FilmeOnline.Logica.Repositorios;
+using FilmeOnline.Logica.Servicos;
+using FilmeOnline.Logica.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FilmeOnline.Entidades
+namespace FilmeOnline.Logica.Entidades
 {
     public class Cliente : Entidade
     {

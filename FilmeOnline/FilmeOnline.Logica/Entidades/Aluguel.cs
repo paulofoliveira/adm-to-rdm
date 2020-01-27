@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FilmeOnline.Entidades
+namespace FilmeOnline.Logica.Entidades
 {
     public class Aluguel : Entidade
     {

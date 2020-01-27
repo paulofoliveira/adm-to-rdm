@@ -1,8 +1,8 @@
-using FilmeOnline.Entidades;
+using FilmeOnline.Logica.Entidades;
 using System;
 using System.Linq;
 
-namespace FilmeOnline.Servicos
+namespace FilmeOnline.Logica.Servicos
 {
     public class ClienteServico
     {

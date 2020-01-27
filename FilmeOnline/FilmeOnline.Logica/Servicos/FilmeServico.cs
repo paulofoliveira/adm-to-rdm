@@ -1,7 +1,7 @@
 ﻿using System;
-using FilmeOnline.Entidades;
+using FilmeOnline.Logica.Entidades;
 
-namespace FilmeOnline.Servicos
+namespace FilmeOnline.Logica.Servicos
 {
     public class FilmeServico
     {

@@ -1,7 +1,7 @@
-using FilmeOnline.Entidades;
+using FilmeOnline.Logica.Entidades;
 using FluentNHibernate.Mapping;
 
-namespace FilmeOnline.Mapeamentos
+namespace FilmeOnline.Logica.Mapeamentos
 {
     public class CustomerMap : ClassMap<Cliente>
     {
