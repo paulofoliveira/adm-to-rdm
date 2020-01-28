@@ -13,17 +13,18 @@ namespace FilmeOnline.Logica.Servicos
             _filmeServico = filmeServico;
         }
 
-        private decimal CalcularPreco(ClienteStatus status, DateTime? dataExpiracaoStatus, LicencaTipo licencaTipo)
+        private Reais CalcularPreco(ClienteStatus status, DateTime? dataExpiracaoStatus, LicencaTipo licencaTipo)
         {
-            decimal valor;
+            Reais reais;
+
             switch (licencaTipo)
             {
                 case LicencaTipo.DoisDias:
-                    valor = 4;
+                    reais = Reais.Of(4);
                     break;
 
                 case LicencaTipo.Vitalicio:
-                    valor = 8;
+                    reais = Reais.Of(8);
                     break;
 
                 default:
@@ -32,16 +33,16 @@ namespace FilmeOnline.Logica.Servicos
 
             if (status == ClienteStatus.Avancado && (dataExpiracaoStatus == null || dataExpiracaoStatus.Value >= DateTime.UtcNow))
             {
-                valor = valor * 0.75m;
+                reais *= 0.75m;
             }
 
-            return valor;
+            return reais;
         }
 
         public void AlugarFilme(Cliente cliente, Filme filme)
         {
             DateTime? dataExpiracao = _filmeServico.RecuperarDataExpiracao(filme.Licenca);
-            decimal valor = CalcularPreco(cliente.Status, cliente.DataExpiracaoStatus, filme.Licenca);
+            var valor = CalcularPreco(cliente.Status, cliente.DataExpiracaoStatus, filme.Licenca);
 
             var aluguel = new Aluguel
             {

@@ -33,5 +33,13 @@ namespace FilmeOnline.Logica.Entidades
         {
             return GetHashCode();
         }
+
+        // Conversões implicitas (de objeto de valor para string) e explicitas (de string para objeto de valor).
+
+        /* É a famosa lógica do: Toda string é um objeto mas nem todo objeto é uma string. Se eu quero uma string de um objeto.
+            var x = (string)obj; // Pode dar erro por conta da afirmação acima. */
+
+        public static implicit operator string(ClienteNome nome) => nome.Value;
+        public static explicit operator ClienteNome(string nome) => Criar(nome).Value;
     }
 }

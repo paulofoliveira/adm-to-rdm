@@ -84,6 +84,7 @@
     <Compile Include="Entidades\Entidade.cs" />
     <Compile Include="Entidades\Filme.cs" />
     <Compile Include="Entidades\LicencaTipo.cs" />
+    <Compile Include="Entidades\Reais.cs" />
     <Compile Include="Mapeamentos\ClienteMap.cs" />
     <Compile Include="Mapeamentos\FilmeMap.cs" />
     <Compile Include="Mapeamentos\AluguelMap.cs" />

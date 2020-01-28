@@ -34,5 +34,8 @@ namespace FilmeOnline.Logica.Entidades
         {
             return GetHashCode();
         }
+
+        public static implicit operator string(Email email) => email.Value;
+        public static explicit operator Email(string email) => Criar(email).Value;
     }
 }

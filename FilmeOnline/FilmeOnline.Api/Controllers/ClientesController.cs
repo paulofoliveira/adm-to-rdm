@@ -100,7 +100,7 @@ namespace FilmeOnline.Api.Controllers
                 {
                     Nome = nomeOuErro.Value,
                     Email = emailOuErro.Value,
-                    ValorGasto = 0,
+                    ValorGasto = Reais.Of(0),
                     Status = ClienteStatus.Normal,
                     DataExpiracaoStatus = null
                 };

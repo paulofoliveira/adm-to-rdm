@@ -9,11 +9,11 @@ namespace FilmeOnline.Logica.Mapeamentos
         {
             Id(x => x.Id);
 
-            Map(x => x.Nome);
-            Map(x => x.Email);
+            Map(x => x.Nome).CustomType<string>().Access.CamelCaseField(Prefix.Underscore);
+            Map(x => x.Email).CustomType<string>().Access.CamelCaseField(Prefix.Underscore);
             Map(x => x.Status).CustomType<int>();
             Map(x => x.DataExpiracaoStatus).Nullable();
-            Map(x => x.ValorGasto);
+            Map(x => x.ValorGasto).CustomType<decimal>().Access.CamelCaseField(Prefix.Underscore);
 
             HasMany(x => x.Alugueis);
         }
