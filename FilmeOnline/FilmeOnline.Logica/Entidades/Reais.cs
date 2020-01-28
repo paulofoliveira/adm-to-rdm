@@ -5,7 +5,7 @@ namespace FilmeOnline.Logica.Entidades
     public class Reais : ValueObject<Reais>
     {
         private const decimal MaxQuantidadeEmReais = 1_000_000;
-        public Reais(decimal quantidadeEmReais)
+        private Reais(decimal quantidadeEmReais)
         {
             Value = quantidadeEmReais;
         }
