@@ -13,34 +13,34 @@ namespace FilmeOnline.Logica.Servicos
             _filmeServico = filmeServico;
         }
 
-        private decimal CalcularPreco(ClienteStatus status, DateTime? statusExpirationDate, LicencaTipo licensingModel)
+        private decimal CalcularPreco(ClienteStatus status, DateTime? dataExpiracaoStatus, LicencaTipo licencaTipo)
         {
-            decimal price;
-            switch (licensingModel)
+            decimal valor;
+            switch (licencaTipo)
             {
                 case LicencaTipo.DoisDias:
-                    price = 4;
+                    valor = 4;
                     break;
 
                 case LicencaTipo.Vitalicio:
-                    price = 8;
+                    valor = 8;
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (status == ClienteStatus.Avancado && (statusExpirationDate == null || statusExpirationDate.Value >= DateTime.UtcNow))
+            if (status == ClienteStatus.Avancado && (dataExpiracaoStatus == null || dataExpiracaoStatus.Value >= DateTime.UtcNow))
             {
-                price = price * 0.75m;
+                valor = valor * 0.75m;
             }
 
-            return price;
+            return valor;
         }
 
         public void AlugarFilme(Cliente cliente, Filme filme)
         {
-            DateTime? dataExpiracao = _filmeServico.GetExpirationDate(filme.Licenca);
+            DateTime? dataExpiracao = _filmeServico.RecuperarDataExpiracao(filme.Licenca);
             decimal valor = CalcularPreco(cliente.Status, cliente.DataExpiracaoStatus, filme.Licenca);
 
             var aluguel = new Aluguel
@@ -55,18 +55,18 @@ namespace FilmeOnline.Logica.Servicos
             cliente.ValorGasto += valor;
         }
 
-        public bool PromoverCliente(Cliente customer)
+        public bool PromoverCliente(Cliente cliente)
         {
             // Pelo menos 2 filmes alugados nos últimos 30 dias
-            if (customer.Alugueis.Count(x => x.DataExpiracao == null || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
+            if (cliente.Alugueis.Count(x => x.DataExpiracao == null || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
                 return false;
 
             // Pelo menos 100 reais gastos no último ano.
-            if (customer.Alugueis.Where(x => x.DataAluguel > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Valor) < 100m)
+            if (cliente.Alugueis.Where(x => x.DataAluguel > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Valor) < 100m)
                 return false;
 
-            customer.Status = ClienteStatus.Avancado;
-            customer.DataExpiracaoStatus = DateTime.UtcNow.AddYears(1);
+            cliente.Status = ClienteStatus.Avancado;
+            cliente.DataExpiracaoStatus = DateTime.UtcNow.AddYears(1);
 
             return true;
         }

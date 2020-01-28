@@ -5,11 +5,11 @@ namespace FilmeOnline.Logica.Servicos
 {
     public class FilmeServico
     {
-        public DateTime? GetExpirationDate(LicencaTipo licensingModel)
+        public DateTime? RecuperarDataExpiracao(LicencaTipo licencaTipo)
         {
             DateTime? result;
 
-            switch (licensingModel)
+            switch (licencaTipo)
             {
                 case LicencaTipo.DoisDias:
                     result = DateTime.UtcNow.AddDays(2);
