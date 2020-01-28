@@ -31,7 +31,7 @@ namespace FilmeOnline.Logica.Entidades
         }
         protected override int GetHashCodeCore()
         {
-            return GetHashCode();
+            return  Value.GetHashCode();
         }
 
         // Conversões implicitas (de objeto de valor para string) e explicitas (de string para objeto de valor).

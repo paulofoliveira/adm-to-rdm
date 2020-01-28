@@ -32,7 +32,7 @@ namespace FilmeOnline.Logica.Entidades
         }
         protected override int GetHashCodeCore()
         {
-            return GetHashCode();
+            return Value.GetHashCode();
         }
 
         public static implicit operator string(Email email) => email.Value;

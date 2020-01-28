@@ -29,7 +29,7 @@ namespace FilmeOnline.Logica.Entidades
         {
             return Value == other.Value;
         }
-        protected override int GetHashCodeCore() => GetHashCode();
+        protected override int GetHashCodeCore() => Value.GetHashCode();
 
         public static implicit operator decimal(Reais reais) => reais.Value;
         //public static explicit operator Reais(decimal quantidadeEmReais) => Criar(quantidadeEmReais).Value;
