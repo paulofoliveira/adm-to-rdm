@@ -170,7 +170,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Id de cliente inválido: " + id);
                 }
 
-                if (cliente.Alugueis.Any(x => x.FilmeId == filme.Id && (x.DataExpiracao == null || x.DataExpiracao.Value >= DateTime.UtcNow)))
+                if (cliente.Alugueis.Any(x => x.FilmeId == filme.Id && !x.DataExpiracao.Expirou))
                 {
                     return BadRequest("O filme já foi comprado: " + filme.Nome);
                 }
@@ -200,7 +200,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Id de cliente inválido: " + id);
                 }
 
-                if (cliente.Status == ClienteStatus.Avancado && (cliente.DataExpiracaoStatus == null || cliente.DataExpiracaoStatus.Value < DateTime.UtcNow))
+                if (cliente.Status == ClienteStatus.Avancado && !cliente.DataExpiracaoStatus.Expirou)
                 {
                     return BadRequest("Cliente já tem status Avançado");
                 }

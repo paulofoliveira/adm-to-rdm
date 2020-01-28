@@ -13,7 +13,7 @@ namespace FilmeOnline.Logica.Servicos
             _filmeServico = filmeServico;
         }
 
-        private Reais CalcularPreco(ClienteStatus status, DateTime? dataExpiracaoStatus, LicencaTipo licencaTipo)
+        private Reais CalcularPreco(ClienteStatus status, DataExpiracao dataExpiracaoStatus, LicencaTipo licencaTipo)
         {
             Reais reais;
 
@@ -31,7 +31,7 @@ namespace FilmeOnline.Logica.Servicos
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (status == ClienteStatus.Avancado && (dataExpiracaoStatus == null || dataExpiracaoStatus.Value >= DateTime.UtcNow))
+            if (status == ClienteStatus.Avancado && !dataExpiracaoStatus.Expirou)
             {
                 reais *= 0.75m;
             }
@@ -41,7 +41,7 @@ namespace FilmeOnline.Logica.Servicos
 
         public void AlugarFilme(Cliente cliente, Filme filme)
         {
-            DateTime? dataExpiracao = _filmeServico.RecuperarDataExpiracao(filme.Licenca);
+            DataExpiracao dataExpiracao = _filmeServico.RecuperarDataExpiracao(filme.Licenca);
             var valor = CalcularPreco(cliente.Status, cliente.DataExpiracaoStatus, filme.Licenca);
 
             var aluguel = new Aluguel
@@ -49,7 +49,8 @@ namespace FilmeOnline.Logica.Servicos
                 FilmeId = filme.Id,
                 ClienteId = cliente.Id,
                 DataExpiracao = dataExpiracao,
-                Valor = valor
+                Valor = valor,
+                DataAluguel = DateTime.UtcNow
             };
 
             cliente.Alugueis.Add(aluguel);
@@ -59,7 +60,7 @@ namespace FilmeOnline.Logica.Servicos
         public bool PromoverCliente(Cliente cliente)
         {
             // Pelo menos 2 filmes alugados nos últimos 30 dias
-            if (cliente.Alugueis.Count(x => x.DataExpiracao == null || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
+            if (cliente.Alugueis.Count(x => x.DataExpiracao == DataExpiracao.Infinito || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
                 return false;
 
             // Pelo menos 100 reais gastos no último ano.
@@ -67,7 +68,7 @@ namespace FilmeOnline.Logica.Servicos
                 return false;
 
             cliente.Status = ClienteStatus.Avancado;
-            cliente.DataExpiracaoStatus = DateTime.UtcNow.AddYears(1);
+            cliente.DataExpiracaoStatus = (DataExpiracao)DateTime.UtcNow.AddYears(1);
 
             return true;
         }

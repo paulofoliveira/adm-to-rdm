@@ -80,6 +80,7 @@
     <Compile Include="Entidades\Cliente.cs" />
     <Compile Include="Entidades\ClienteNome.cs" />
     <Compile Include="Entidades\ClienteStatus.cs" />
+    <Compile Include="Entidades\DataExpiracao.cs" />
     <Compile Include="Entidades\Email.cs" />
     <Compile Include="Entidades\Entidade.cs" />
     <Compile Include="Entidades\Filme.cs" />

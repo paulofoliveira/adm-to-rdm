@@ -1,5 +1,6 @@
 using FilmeOnline.Logica.Entidades;
 using FluentNHibernate.Mapping;
+using System;
 
 namespace FilmeOnline.Logica.Mapeamentos
 {
@@ -9,9 +10,9 @@ namespace FilmeOnline.Logica.Mapeamentos
         {
             Id(x => x.Id);
 
-            Map(x => x.Valor);
+            Map(x => x.Valor).CustomType<decimal>().Access.CamelCaseField(Prefix.Underscore);
             Map(x => x.DataAluguel);
-            Map(x => x.DataExpiracao).Nullable();
+            Map(x => x.DataExpiracao).CustomType<DateTime?>().Access.CamelCaseField(Prefix.Underscore).Nullable();
             Map(x => x.FilmeId);
             Map(x => x.ClienteId);
 

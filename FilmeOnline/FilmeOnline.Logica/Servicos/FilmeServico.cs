@@ -5,18 +5,18 @@ namespace FilmeOnline.Logica.Servicos
 {
     public class FilmeServico
     {
-        public DateTime? RecuperarDataExpiracao(LicencaTipo licencaTipo)
+        public DataExpiracao RecuperarDataExpiracao(LicencaTipo licencaTipo)
         {
-            DateTime? result;
+            DataExpiracao result;
 
             switch (licencaTipo)
             {
                 case LicencaTipo.DoisDias:
-                    result = DateTime.UtcNow.AddDays(2);
+                    result = (DataExpiracao)DateTime.UtcNow.AddDays(2);
                     break;
 
                 case LicencaTipo.Vitalicio:
-                    result = null;
+                    result = DataExpiracao.Infinito;
                     break;
 
                 default:
