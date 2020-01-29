@@ -12,11 +12,20 @@ namespace FilmeOnline.Logica.Mapeamentos
 
             Map(x => x.Nome).CustomType<string>().Access.CamelCaseField(Prefix.Underscore);
             Map(x => x.Email).CustomType<string>().Access.CamelCaseField(Prefix.Underscore);
-            Map(x => x.Status).CustomType<int>();
-            Map(x => x.DataExpiracaoStatus).CustomType<DateTime?>().Access.CamelCaseField(Prefix.Underscore).Nullable();
+            //Map(x => x.Status).CustomType<int>();
+            //Map(x => x.DataExpiracaoStatus).CustomType<DateTime?>().Access.CamelCaseField(Prefix.Underscore).Nullable();
             Map(x => x.ValorGasto).CustomType<decimal>().Access.CamelCaseField(Prefix.Underscore);
 
-            HasMany(x => x.Alugueis);
+            Component(x => x.Status, y =>
+             {
+                 y.Map(x => x.Tipo, "Status").CustomType<int>();
+                 
+                 y.Map(x => x.DataExpiracao, "DataExpiracaoStatus")
+                 .CustomType<DateTime?>()
+                 .Access.CamelCaseField(Prefix.Underscore);
+             });
+
+            HasMany(x => x.Alugueis).Access.CamelCaseField(Prefix.Underscore);
         }
     }
 }

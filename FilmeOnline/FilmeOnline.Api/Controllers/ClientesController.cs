@@ -40,8 +40,8 @@ namespace FilmeOnline.Api.Controllers
                 Nome = cliente.Nome.Value,
                 Email = cliente.Email.Value,
                 ValorGasto = cliente.ValorGasto,
-                Status = cliente.Status.ToString(),
-                DataExpiracaoStatus = cliente.DataExpiracaoStatus,
+                Status = cliente.Status.Tipo.ToString(),
+                DataExpiracaoStatus = cliente.Status.DataExpiracao,
                 Alugueis = cliente.Alugueis.Select(p => new AluguelDto()
                 {
                     Valor = p.Valor,
@@ -70,7 +70,7 @@ namespace FilmeOnline.Api.Controllers
                 Email = p.Email.Value,
                 ValorGasto = p.ValorGasto,
                 Status = p.Status.ToString(),
-                DataExpiracaoStatus = p.DataExpiracaoStatus
+                DataExpiracaoStatus = p.Status.DataExpiracao
             }).ToList();
 
             return Json(dto);
@@ -96,14 +96,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Email já está em uso: " + item.Email);
                 }
 
-                var cliente = new Cliente()
-                {
-                    Nome = nomeOuErro.Value,
-                    Email = emailOuErro.Value,
-                    ValorGasto = Reais.Of(0),
-                    Status = ClienteStatus.Normal,
-                    DataExpiracaoStatus = null
-                };
+                var cliente = new Cliente(nomeOuErro.Value, emailOuErro.Value);
 
                 _clienteRepositorio.Adicionar(cliente);
                 _clienteRepositorio.Commitar();
@@ -200,7 +193,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Id de cliente inválido: " + id);
                 }
 
-                if (cliente.Status == ClienteStatus.Avancado && !cliente.DataExpiracaoStatus.Expirou)
+                if (cliente.Status.Avancado)
                 {
                     return BadRequest("Cliente já tem status Avançado");
                 }

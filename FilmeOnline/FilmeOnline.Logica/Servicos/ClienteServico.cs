@@ -13,7 +13,7 @@ namespace FilmeOnline.Logica.Servicos
             _filmeServico = filmeServico;
         }
 
-        private Reais CalcularPreco(ClienteStatus status, DataExpiracao dataExpiracaoStatus, LicencaTipo licencaTipo)
+        private Reais CalcularPreco(ClienteStatus status, LicencaTipo licencaTipo)
         {
             Reais reais;
 
@@ -31,7 +31,7 @@ namespace FilmeOnline.Logica.Servicos
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (status == ClienteStatus.Avancado && !dataExpiracaoStatus.Expirou)
+            if (status.Avancado)
             {
                 reais *= 0.75m;
             }
@@ -42,19 +42,10 @@ namespace FilmeOnline.Logica.Servicos
         public void AlugarFilme(Cliente cliente, Filme filme)
         {
             DataExpiracao dataExpiracao = _filmeServico.RecuperarDataExpiracao(filme.Licenca);
-            var valor = CalcularPreco(cliente.Status, cliente.DataExpiracaoStatus, filme.Licenca);
+            var valor = CalcularPreco(cliente.Status, filme.Licenca);
 
-            var aluguel = new Aluguel
-            {
-                FilmeId = filme.Id,
-                ClienteId = cliente.Id,
-                DataExpiracao = dataExpiracao,
-                Valor = valor,
-                DataAluguel = DateTime.UtcNow
-            };
-
-            cliente.Alugueis.Add(aluguel);
-            cliente.ValorGasto += valor;
+            //cliente.Alugueis.Add(aluguel);
+            cliente.AdicionarFilmeAlugado(filme, dataExpiracao, valor);
         }
 
         public bool PromoverCliente(Cliente cliente)
@@ -67,8 +58,7 @@ namespace FilmeOnline.Logica.Servicos
             if (cliente.Alugueis.Where(x => x.DataAluguel > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Valor) < 100m)
                 return false;
 
-            cliente.Status = ClienteStatus.Avancado;
-            cliente.DataExpiracaoStatus = (DataExpiracao)DateTime.UtcNow.AddYears(1);
+            cliente.Status = cliente.Status.Promover();
 
             return true;
         }

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
+// Os campos devem serem mapeados como "protected" e não private para casos de encapsulamento por conta do mapeamento do ORM.
 
 namespace FilmeOnline.Logica.Entidades
 {
@@ -8,7 +11,22 @@ namespace FilmeOnline.Logica.Entidades
         private string _nome;
         private string _email;
         private decimal _valorGasto;
-        private DateTime? _dataExpiracaoStatus;
+
+        private IList<Aluguel> _alugueis;
+        protected Cliente() // Por conta do mapeamento do ORM.
+        {
+            _alugueis = new List<Aluguel>();
+        }
+
+        public Cliente(ClienteNome nome, Email email) : this()
+        {
+            _nome = nome ?? throw new ArgumentNullException(nameof(nome));
+            _email = email ?? throw new ArgumentNullException(nameof(email));
+
+            ValorGasto = Reais.Of(0);
+            Status = ClienteStatus.Normal;
+        }
+
         public virtual ClienteNome Nome
         {
             get => (ClienteNome)_nome;
@@ -18,20 +36,30 @@ namespace FilmeOnline.Logica.Entidades
         public virtual Email Email
         {
             get => (Email)_email;
-            set => _email = value;
+            protected set => _email = value;
         }
+
         public virtual ClienteStatus Status { get; set; }
-        public virtual DataExpiracao DataExpiracaoStatus
-        {
-            get => (DataExpiracao)_dataExpiracaoStatus;
-            set => _dataExpiracaoStatus = value;
-        }
 
         public virtual Reais ValorGasto
         {
             get => Reais.Of(_valorGasto);
-            set => _valorGasto = value;
+            protected set => _valorGasto = value;
         }
-        public virtual IList<Aluguel> Alugueis { get; set; }
+        public virtual IReadOnlyList<Aluguel> Alugueis => _alugueis.ToList();
+        public virtual void AdicionarFilmeAlugado(Filme filme, DataExpiracao dataExpiracao, Reais valor)
+        {
+            var aluguel = new Aluguel
+            {
+                FilmeId = filme.Id,
+                ClienteId = Id,
+                DataExpiracao = dataExpiracao,
+                Valor = valor,
+                DataAluguel = DateTime.UtcNow
+            };
+
+            _alugueis.Add(aluguel);
+            ValorGasto += valor;
+        }
     }
 }
