@@ -28,9 +28,7 @@ namespace FilmeOnline.Api.Controllers
             var cliente = _clienteRepositorio.RecuperarPorId(id);
 
             if (cliente == null)
-            {
                 return NotFound();
-            }
 
             var dto = new ClienteDto()
             {
@@ -83,14 +81,10 @@ namespace FilmeOnline.Api.Controllers
             var result = Result.Combine(nomeOuErro, emailOuErro);
 
             if (result.IsFailure)
-            {
                 return Error(result.Error);
-            }
 
             if (_clienteRepositorio.RecuperarPorEmail(emailOuErro.Value) != null)
-            {
                 return Error("Email já está em uso: " + item.Email);
-            }
 
             var cliente = new Cliente(nomeOuErro.Value, emailOuErro.Value);
 
@@ -108,17 +102,12 @@ namespace FilmeOnline.Api.Controllers
             var result = Result.Combine(nomeOuErro);
 
             if (result.IsFailure)
-            {
                 return Error(result.Error);
-            }
-
 
             var cliente = _clienteRepositorio.RecuperarPorId(id);
 
             if (cliente == null)
-            {
                 return Error("Id de cliente inválido: " + id);
-            }
 
             cliente.Nome = nomeOuErro.Value;
 
@@ -132,21 +121,15 @@ namespace FilmeOnline.Api.Controllers
             var filme = _filmeRepositorio.RecuperarPorId(filmeId);
 
             if (filme == null)
-            {
                 return Error("Id de filme inválido: " + filmeId);
-            }
 
             var cliente = _clienteRepositorio.RecuperarPorId(id);
 
             if (cliente == null)
-            {
                 return Error("Id de cliente inválido: " + id);
-            }
 
-            if (cliente.Alugueis.Any(x => x.Filme.Id == filme.Id && !x.DataExpiracao.Expirou))
-            {
+            if (cliente.TemFilmeAlugado(filme))
                 return Error("O filme já foi comprado: " + filme.Nome);
-            }
 
             cliente.AlugarFilme(filme);
 
@@ -160,21 +143,18 @@ namespace FilmeOnline.Api.Controllers
             var cliente = _clienteRepositorio.RecuperarPorId(id);
 
             if (cliente == null)
-            {
                 return Error("Id de cliente inválido: " + id);
-            }
 
-            if (cliente.Status.Avancado)
-            {
-                return Error("Cliente já tem status Avançado");
-            }
+            // A ideia do PodePromover segue o princípio do CQS (Command Query Segregation) que:
+            // Define que em um método (No caso do Promover), não podemos ter consulta e mudança de estado. Assim temos a segregação de código para dois métodos.
+            // A ação da mudança permanece no Promover. A checagem com returno via Result class é feita em um método que faz a validação.
 
-            bool successo = cliente.Promover();
+            var podePromoverCheck = cliente.PodePromover();
 
-            if (!successo)
-            {
-                return Error("Não pode promover o cliente");
-            }
+            if (podePromoverCheck.IsFailure)
+                return Error(podePromoverCheck.Error);
+
+            cliente.Promover();
 
             return Ok();
         }

@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,9 @@ namespace FilmeOnline.Logica.Entidades
         public virtual IReadOnlyList<Aluguel> Alugueis => _alugueis.ToList();
         public virtual void AlugarFilme(Filme filme)
         {
+            if (TemFilmeAlugado(filme))
+                throw new Exception();
+
             var dataExpiracao = filme.RecuperarDataExpiracao();
             var valor = filme.CalcularPreco(Status);
 
@@ -54,19 +58,28 @@ namespace FilmeOnline.Logica.Entidades
             ValorGasto += valor;
         }
 
-        public virtual bool Promover()
+        public virtual Result PodePromover()
         {
-            // Pelo menos 2 filmes alugados nos últimos 30 dias
-            if (Alugueis.Count(x => x.DataExpiracao == DataExpiracao.Infinito || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
-                return false;
+            if (Status.Avancado)
+                return Result.Failure("O cliente ja está com status Avançado");
 
-            // Pelo menos 100 reais gastos no último ano.
+            if (Alugueis.Count(x => x.DataExpiracao == DataExpiracao.Infinito || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
+                return Result.Failure("O cliente tem que ter pelo menos 2 filmes alugados nos últimos 30 dias");
+
             if (Alugueis.Where(x => x.DataAluguel > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Valor) < 100m)
-                return false;
+                return Result.Failure("O cliente tem que ter pelo menos 100 reais gastos no último ano");
+
+            return Result.Ok();
+        }
+
+        public virtual void Promover()
+        {
+            if (PodePromover().IsFailure)
+                throw new Exception();
 
             Status = Status.Promover();
-
-            return true;
         }
+
+        public virtual bool TemFilmeAlugado(Filme filme) => Alugueis.Any(x => x.Filme == filme && !x.DataExpiracao.Expirou);
     }
 }
