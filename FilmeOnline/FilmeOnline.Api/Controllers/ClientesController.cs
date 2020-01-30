@@ -5,16 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using CSharpFunctionalExtensions;
+using FilmeOnline.Logica.Utils;
 
 namespace FilmeOnline.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class ClientesController : Controller
+    public class ClientesController : BaseController
     {
         private readonly FilmeRepositorio _filmeRepositorio;
         private readonly ClienteRepositorio _clienteRepositorio;
 
-        public ClientesController(FilmeRepositorio filmeRepositorio, ClienteRepositorio clienteRepositorio)
+        public ClientesController(UnitOfWork uow, FilmeRepositorio filmeRepositorio, ClienteRepositorio clienteRepositorio)
+            : base(uow)
         {
             _clienteRepositorio = clienteRepositorio;
             _filmeRepositorio = filmeRepositorio;
@@ -52,11 +54,11 @@ namespace FilmeOnline.Api.Controllers
                 }).ToList()
             };
 
-            return Json(dto);
+            return Ok(dto);
         }
 
         [HttpGet]
-        public JsonResult GetLista()
+        public IActionResult GetLista()
         {
             var clientes = _clienteRepositorio.RecuperarLista();
 
@@ -70,7 +72,7 @@ namespace FilmeOnline.Api.Controllers
                 DataExpiracaoStatus = p.Status.DataExpiracao
             }).ToList();
 
-            return Json(dto);
+            return Ok(dto);
         }
 
         [HttpPost]
@@ -85,18 +87,17 @@ namespace FilmeOnline.Api.Controllers
 
                 if (result.IsFailure)
                 {
-                    return BadRequest(result.Error);
+                    return Error(result.Error);
                 }
 
                 if (_clienteRepositorio.RecuperarPorEmail(emailOuErro.Value) != null)
                 {
-                    return BadRequest("Email já está em uso: " + item.Email);
+                    return Error("Email já está em uso: " + item.Email);
                 }
 
                 var cliente = new Cliente(nomeOuErro.Value, emailOuErro.Value);
 
                 _clienteRepositorio.Adicionar(cliente);
-                _clienteRepositorio.Commitar();
 
                 return Ok();
             }
@@ -118,7 +119,7 @@ namespace FilmeOnline.Api.Controllers
 
                 if (result.IsFailure)
                 {
-                    return BadRequest(result.Error);
+                    return Error(result.Error);
                 }
 
 
@@ -126,11 +127,10 @@ namespace FilmeOnline.Api.Controllers
 
                 if (cliente == null)
                 {
-                    return BadRequest("Id de cliente inválido: " + id);
+                    return Error("Id de cliente inválido: " + id);
                 }
 
                 cliente.Nome = nomeOuErro.Value;
-                _clienteRepositorio.Commitar();
 
                 return Ok();
             }
@@ -150,24 +150,22 @@ namespace FilmeOnline.Api.Controllers
 
                 if (filme == null)
                 {
-                    return BadRequest("Id de filme inválido: " + filmeId);
+                    return Error("Id de filme inválido: " + filmeId);
                 }
 
                 var cliente = _clienteRepositorio.RecuperarPorId(id);
 
                 if (cliente == null)
                 {
-                    return BadRequest("Id de cliente inválido: " + id);
+                    return Error("Id de cliente inválido: " + id);
                 }
 
                 if (cliente.Alugueis.Any(x => x.Filme.Id == filme.Id && !x.DataExpiracao.Expirou))
                 {
-                    return BadRequest("O filme já foi comprado: " + filme.Nome);
+                    return Error("O filme já foi comprado: " + filme.Nome);
                 }
 
                 cliente.AlugarFilme(filme);
-
-                _clienteRepositorio.Commitar();
 
                 return Ok();
             }
@@ -187,22 +185,20 @@ namespace FilmeOnline.Api.Controllers
 
                 if (cliente == null)
                 {
-                    return BadRequest("Id de cliente inválido: " + id);
+                    return Error("Id de cliente inválido: " + id);
                 }
 
                 if (cliente.Status.Avancado)
                 {
-                    return BadRequest("Cliente já tem status Avançado");
+                    return Error("Cliente já tem status Avançado");
                 }
 
                 bool successo = cliente.Promover();
 
                 if (!successo)
                 {
-                    return BadRequest("Não pode promover o cliente");
+                    return Error("Não pode promover o cliente");
                 }
-
-                _clienteRepositorio.Commitar();
 
                 return Ok();
             }

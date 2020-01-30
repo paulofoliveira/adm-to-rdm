@@ -21,11 +21,6 @@ namespace FilmeOnline.Logica.Repositorios
         public void Adicionar(T entity)
         {
             _unitOfWork.SaveOrUpdate(entity);
-        }
-
-        public void Commitar()
-        {
-            _unitOfWork.Commit();
-        }
+        }      
     }
 }
