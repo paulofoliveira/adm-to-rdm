@@ -1,11 +1,10 @@
-﻿using FilmeOnline.Logica.Entidades;
+﻿using CSharpFunctionalExtensions;
 using FilmeOnline.Logica.Dtos;
+using FilmeOnline.Logica.Entidades;
 using FilmeOnline.Logica.Repositorios;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using CSharpFunctionalExtensions;
 using FilmeOnline.Logica.Utils;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace FilmeOnline.Api.Controllers
 {
@@ -78,134 +77,106 @@ namespace FilmeOnline.Api.Controllers
         [HttpPost]
         public IActionResult Cadastrar([FromBody] CriarClienteDto item)
         {
-            try
+            var nomeOuErro = ClienteNome.Criar(item.Nome);
+            var emailOuErro = Email.Criar(item.Email);
+
+            var result = Result.Combine(nomeOuErro, emailOuErro);
+
+            if (result.IsFailure)
             {
-                var nomeOuErro = ClienteNome.Criar(item.Nome);
-                var emailOuErro = Email.Criar(item.Email);
-
-                var result = Result.Combine(nomeOuErro, emailOuErro);
-
-                if (result.IsFailure)
-                {
-                    return Error(result.Error);
-                }
-
-                if (_clienteRepositorio.RecuperarPorEmail(emailOuErro.Value) != null)
-                {
-                    return Error("Email já está em uso: " + item.Email);
-                }
-
-                var cliente = new Cliente(nomeOuErro.Value, emailOuErro.Value);
-
-                _clienteRepositorio.Adicionar(cliente);
-
-                return Ok();
+                return Error(result.Error);
             }
-            catch (Exception e)
+
+            if (_clienteRepositorio.RecuperarPorEmail(emailOuErro.Value) != null)
             {
-                return StatusCode(500, new { error = e.Message });
+                return Error("Email já está em uso: " + item.Email);
             }
+
+            var cliente = new Cliente(nomeOuErro.Value, emailOuErro.Value);
+
+            _clienteRepositorio.Adicionar(cliente);
+
+            return Ok();
         }
 
         [HttpPut]
         [Route("{id}")]
         public IActionResult Atualizar(long id, [FromBody] AtualizarClienteDto item)
         {
-            try
+            var nomeOuErro = ClienteNome.Criar(item.Nome);
+
+            var result = Result.Combine(nomeOuErro);
+
+            if (result.IsFailure)
             {
-                var nomeOuErro = ClienteNome.Criar(item.Nome);
-
-                var result = Result.Combine(nomeOuErro);
-
-                if (result.IsFailure)
-                {
-                    return Error(result.Error);
-                }
-
-
-                var cliente = _clienteRepositorio.RecuperarPorId(id);
-
-                if (cliente == null)
-                {
-                    return Error("Id de cliente inválido: " + id);
-                }
-
-                cliente.Nome = nomeOuErro.Value;
-
-                return Ok();
+                return Error(result.Error);
             }
-            catch (Exception e)
+
+
+            var cliente = _clienteRepositorio.RecuperarPorId(id);
+
+            if (cliente == null)
             {
-                return StatusCode(500, new { error = e.Message });
+                return Error("Id de cliente inválido: " + id);
             }
+
+            cliente.Nome = nomeOuErro.Value;
+
+            return Ok();
         }
 
         [HttpPost]
         [Route("{id}/filmes")]
         public IActionResult AlugarFilme(long id, [FromBody] long filmeId)
         {
-            try
+            var filme = _filmeRepositorio.RecuperarPorId(filmeId);
+
+            if (filme == null)
             {
-                var filme = _filmeRepositorio.RecuperarPorId(filmeId);
-
-                if (filme == null)
-                {
-                    return Error("Id de filme inválido: " + filmeId);
-                }
-
-                var cliente = _clienteRepositorio.RecuperarPorId(id);
-
-                if (cliente == null)
-                {
-                    return Error("Id de cliente inválido: " + id);
-                }
-
-                if (cliente.Alugueis.Any(x => x.Filme.Id == filme.Id && !x.DataExpiracao.Expirou))
-                {
-                    return Error("O filme já foi comprado: " + filme.Nome);
-                }
-
-                cliente.AlugarFilme(filme);
-
-                return Ok();
+                return Error("Id de filme inválido: " + filmeId);
             }
-            catch (Exception e)
+
+            var cliente = _clienteRepositorio.RecuperarPorId(id);
+
+            if (cliente == null)
             {
-                return StatusCode(500, new { error = e.Message });
+                return Error("Id de cliente inválido: " + id);
             }
+
+            if (cliente.Alugueis.Any(x => x.Filme.Id == filme.Id && !x.DataExpiracao.Expirou))
+            {
+                return Error("O filme já foi comprado: " + filme.Nome);
+            }
+
+            cliente.AlugarFilme(filme);
+
+            return Ok();
         }
 
         [HttpPost]
         [Route("{id}/promover")]
         public IActionResult PromoverCliente(long id)
         {
-            try
+            var cliente = _clienteRepositorio.RecuperarPorId(id);
+
+            if (cliente == null)
             {
-                var cliente = _clienteRepositorio.RecuperarPorId(id);
-
-                if (cliente == null)
-                {
-                    return Error("Id de cliente inválido: " + id);
-                }
-
-                if (cliente.Status.Avancado)
-                {
-                    return Error("Cliente já tem status Avançado");
-                }
-
-                bool successo = cliente.Promover();
-
-                if (!successo)
-                {
-                    return Error("Não pode promover o cliente");
-                }
-
-                return Ok();
+                return Error("Id de cliente inválido: " + id);
             }
-            catch (Exception e)
+
+            if (cliente.Status.Avancado)
             {
-                return StatusCode(500, new { error = e.Message });
+                return Error("Cliente já tem status Avançado");
             }
+
+            bool successo = cliente.Promover();
+
+            if (!successo)
+            {
+                return Error("Não pode promover o cliente");
+            }
+
+            return Ok();
         }
     }
 }
