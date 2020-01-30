@@ -33,13 +33,9 @@ namespace FilmeOnline.Logica.Entidades
             set => _nome = value;
         }
 
-        public virtual Email Email
-        {
-            get => (Email)_email;
-            protected set => _email = value;
-        }
+        public virtual Email Email => (Email)_email;
 
-        public virtual ClienteStatus Status { get; set; }
+        public virtual ClienteStatus Status { get; protected set; }
 
         public virtual Reais ValorGasto
         {
