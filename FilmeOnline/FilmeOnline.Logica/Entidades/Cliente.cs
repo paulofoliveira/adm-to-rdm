@@ -49,17 +49,25 @@ namespace FilmeOnline.Logica.Entidades
         public virtual IReadOnlyList<Aluguel> Alugueis => _alugueis.ToList();
         public virtual void AdicionarFilmeAlugado(Filme filme, DataExpiracao dataExpiracao, Reais valor)
         {
-            var aluguel = new Aluguel
-            {
-                FilmeId = filme.Id,
-                ClienteId = Id,
-                DataExpiracao = dataExpiracao,
-                Valor = valor,
-                DataAluguel = DateTime.UtcNow
-            };
+            var aluguel = new Aluguel(filme, this, valor, dataExpiracao);
 
             _alugueis.Add(aluguel);
             ValorGasto += valor;
+        }
+
+        public virtual bool Promover()
+        {
+            // Pelo menos 2 filmes alugados nos últimos 30 dias
+            if (Alugueis.Count(x => x.DataExpiracao == DataExpiracao.Infinito || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
+                return false;
+
+            // Pelo menos 100 reais gastos no último ano.
+            if (Alugueis.Where(x => x.DataAluguel > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Valor) < 100m)
+                return false;
+
+            Status = Status.Promover();
+
+            return true;
         }
     }
 }

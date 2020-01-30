@@ -49,7 +49,7 @@ namespace FilmeOnline.Api.Controllers
                     DataAluguel = p.DataAluguel,
                     Filme = new FilmeDto()
                     {
-                        Id = p.FilmeId,
+                        Id = p.Filme.Id,
                         Nome = p.Filme.Nome
                     }
                 }).ToList()
@@ -163,7 +163,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Id de cliente inválido: " + id);
                 }
 
-                if (cliente.Alugueis.Any(x => x.FilmeId == filme.Id && !x.DataExpiracao.Expirou))
+                if (cliente.Alugueis.Any(x => x.Filme.Id == filme.Id && !x.DataExpiracao.Expirou))
                 {
                     return BadRequest("O filme já foi comprado: " + filme.Nome);
                 }
@@ -198,7 +198,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("Cliente já tem status Avançado");
                 }
 
-                bool successo = _clienteServico.PromoverCliente(cliente);
+                bool successo = cliente.Promover();
 
                 if (!successo)
                 {

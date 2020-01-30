@@ -13,10 +13,9 @@ namespace FilmeOnline.Logica.Mapeamentos
             Map(x => x.Valor).CustomType<decimal>().Access.CamelCaseField(Prefix.Underscore);
             Map(x => x.DataAluguel);
             Map(x => x.DataExpiracao).CustomType<DateTime?>().Access.CamelCaseField(Prefix.Underscore).Nullable();
-            Map(x => x.FilmeId);
-            Map(x => x.ClienteId);
 
-            References(x => x.Filme).LazyLoad(Laziness.False).ReadOnly();
+            References(x => x.Filme);
+            References(x => x.Cliente);
         }
     }
 }

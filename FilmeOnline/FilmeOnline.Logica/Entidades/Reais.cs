@@ -10,6 +10,7 @@ namespace FilmeOnline.Logica.Entidades
             Value = quantidadeEmReais;
         }
 
+        public bool Zero => Value == 0;
         public static Result<Reais> Criar(decimal quantidadeEmReais)
         {
             if (quantidadeEmReais < 0)

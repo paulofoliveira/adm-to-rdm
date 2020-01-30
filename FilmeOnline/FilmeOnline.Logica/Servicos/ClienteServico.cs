@@ -46,21 +46,6 @@ namespace FilmeOnline.Logica.Servicos
 
             //cliente.Alugueis.Add(aluguel);
             cliente.AdicionarFilmeAlugado(filme, dataExpiracao, valor);
-        }
-
-        public bool PromoverCliente(Cliente cliente)
-        {
-            // Pelo menos 2 filmes alugados nos últimos 30 dias
-            if (cliente.Alugueis.Count(x => x.DataExpiracao == DataExpiracao.Infinito || x.DataExpiracao.Value >= DateTime.UtcNow.AddDays(-30)) < 2)
-                return false;
-
-            // Pelo menos 100 reais gastos no último ano.
-            if (cliente.Alugueis.Where(x => x.DataAluguel > DateTime.UtcNow.AddYears(-1)).Sum(x => x.Valor) < 100m)
-                return false;
-
-            cliente.Status = cliente.Status.Promover();
-
-            return true;
-        }
+        }       
     }
 }
