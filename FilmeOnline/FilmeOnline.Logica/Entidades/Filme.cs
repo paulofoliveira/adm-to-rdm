@@ -1,49 +1,33 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace FilmeOnline.Logica.Entidades
 {
-    public class Filme : Entidade
+    public abstract class Filme : Entidade
     {
         public virtual string Nome { get; protected set; }
-        public virtual LicencaTipo Licenca { get; protected set; }
+        protected virtual LicencaTipo Licenca { get;  set; }
 
-        public DataExpiracao RecuperarDataExpiracao()
-        {
-            DataExpiracao result;
-
-            switch (Licenca)
-            {
-                case LicencaTipo.DoisDias:
-                    result = (DataExpiracao)DateTime.UtcNow.AddDays(2);
-                    break;
-
-                case LicencaTipo.Vitalicio:
-                    result = DataExpiracao.Infinito;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return result;
-        }
-
+        public abstract DataExpiracao RecuperarDataExpiracao();
         public virtual Reais CalcularPreco(ClienteStatus status)
         {
             var modificador = 1 - status.ObterDesconto(Licenca);
+            var precoBase = ObterPrecoBase();
 
-            switch (Licenca)
-            {
-                case LicencaTipo.DoisDias:
-                    return Reais.Of(4) * modificador;
-
-                case LicencaTipo.Vitalicio:
-                    return Reais.Of(8) * modificador;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            return precoBase * modificador;
         }
+
+        public abstract Reais ObterPrecoBase();
+    }
+
+    public class DoisDiasFilme : Filme
+    {
+        public override Reais ObterPrecoBase() => Reais.Of(4);
+        public override DataExpiracao RecuperarDataExpiracao() => (DataExpiracao)DateTime.UtcNow.AddDays(2);
+    }
+
+    public class VitalicioFilme : Filme
+    {
+        public override Reais ObterPrecoBase() => Reais.Of(8);
+        public override DataExpiracao RecuperarDataExpiracao() => DataExpiracao.Infinito;
     }
 }
