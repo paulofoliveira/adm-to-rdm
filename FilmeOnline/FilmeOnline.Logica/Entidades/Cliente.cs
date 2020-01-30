@@ -47,8 +47,11 @@ namespace FilmeOnline.Logica.Entidades
             protected set => _valorGasto = value;
         }
         public virtual IReadOnlyList<Aluguel> Alugueis => _alugueis.ToList();
-        public virtual void AdicionarFilmeAlugado(Filme filme, DataExpiracao dataExpiracao, Reais valor)
+        public virtual void AlugarFilme(Filme filme)
         {
+            var dataExpiracao = filme.RecuperarDataExpiracao();
+            var valor = filme.CalcularPreco(Status);
+
             var aluguel = new Aluguel(filme, this, valor, dataExpiracao);
 
             _alugueis.Add(aluguel);

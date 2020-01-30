@@ -1,5 +1,4 @@
 using FilmeOnline.Logica.Repositorios;
-using FilmeOnline.Logica.Servicos;
 using FilmeOnline.Logica.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,10 +24,7 @@ namespace FilmeOnline.Api
             services.AddScoped<UnitOfWork>();
 
             services.AddTransient<FilmeRepositorio>();
-            services.AddTransient<ClienteRepositorio>();
-
-            services.AddTransient<FilmeServico>();
-            services.AddTransient<ClienteServico>();
+            services.AddTransient<ClienteRepositorio>();           
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

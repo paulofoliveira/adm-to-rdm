@@ -1,7 +1,6 @@
 ﻿using FilmeOnline.Logica.Entidades;
 using FilmeOnline.Logica.Dtos;
 using FilmeOnline.Logica.Repositorios;
-using FilmeOnline.Logica.Servicos;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -14,13 +13,11 @@ namespace FilmeOnline.Api.Controllers
     {
         private readonly FilmeRepositorio _filmeRepositorio;
         private readonly ClienteRepositorio _clienteRepositorio;
-        private readonly ClienteServico _clienteServico;
 
-        public ClientesController(FilmeRepositorio filmeRepositorio, ClienteRepositorio clienteRepositorio, ClienteServico clienteServico)
+        public ClientesController(FilmeRepositorio filmeRepositorio, ClienteRepositorio clienteRepositorio)
         {
             _clienteRepositorio = clienteRepositorio;
             _filmeRepositorio = filmeRepositorio;
-            _clienteServico = clienteServico;
         }
 
         [HttpGet]
@@ -168,7 +165,7 @@ namespace FilmeOnline.Api.Controllers
                     return BadRequest("O filme já foi comprado: " + filme.Nome);
                 }
 
-                _clienteServico.AlugarFilme(cliente, filme);
+                cliente.AlugarFilme(filme);
 
                 _clienteRepositorio.Commitar();
 

@@ -93,8 +93,6 @@
     <Compile Include="Repositorios\ClienteRepositorio.cs" />
     <Compile Include="Repositorios\FilmeRepositorio.cs" />
     <Compile Include="Repositorios\Repositorio.cs" />
-    <Compile Include="Servicos\ClienteServico.cs" />
-    <Compile Include="Servicos\FilmeServico.cs" />
     <Compile Include="Utils\SessionFactory.cs" />
     <Compile Include="Utils\UnitOfWork.cs" />
   </ItemGroup>
